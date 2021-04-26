@@ -1,0 +1,215 @@
+
+---------------------------------
+TEST CASES THAT SHOULD PASS
+---------------------------------
+
+
+1
+---------------------------------
+POST/GET REQUEST TO CD OFFERINGS
+
+BODY POST
+{
+    "interestRate": 0.25,
+    "term": 5
+}
+
+STATUS RETURNED
+201
+
+BODY POST
+{
+    "interestRate": 0.50,
+    "term": 10
+}
+
+STATUS RETURNED
+201
+
+BODY GET /CDOfferings
+[
+    {
+        "id": 1,
+        "interestRate": 0.25,
+        "term": 5
+    },
+    {
+        "id": 2,
+        "interestRate": 0.5,
+        "term": 10
+    }
+]
+
+STATUS RETURNED
+200
+
+
+
+2
+---------------------------------
+POST/GET REQUEST TO ACCOUNT HOLDERS
+
+BODY POST /AccountHolders
+{
+    "firstName": "Sadiq",
+    "middleName": "",
+    "lastName": "Manji",
+    "ssn": "123456789"
+}
+
+STATUS RETURNED
+201
+
+BODY GET /AccountHolders/1
+{
+    "id": 1,
+    "firstName": "Sadiq",
+    "middleName": "",
+    "lastName": "Manji",
+    "checkingAccounts": [],
+    "savingsAccounts": [],
+    "cdaccounts": [],
+    "ssn": "123456789",
+    "checkingBalance": 0.0,
+    "savingsBalance": 0.0,
+    "cdbalance": 0.0,
+    "numberOfCheckingAccounts": 0,
+    "numberOfSavingsAccounts": 0,
+    "numberOfCDAccounts": 0,
+    "combinedBalance": 0.0
+}
+
+STATUS RETURNED
+200
+
+
+BODY POST /AccountHolders
+{
+    "firstName": "David",
+    "middleName": "Michael",
+    "lastName": "Amateau",
+    "ssn": "234567890"
+}
+
+STATUS RETURNED
+201
+
+BODY GET /AccountHolders/2
+{
+    "id": 2,
+    "firstName": "David",
+    "middleName": "Michael",
+    "lastName": "Amateau",
+    "checkingAccounts": [],
+    "savingsAccounts": [],
+    "cdaccounts": [],
+    "ssn": "234567890",
+    "checkingBalance": 0.0,
+    "savingsBalance": 0.0,
+    "cdbalance": 0.0,
+    "numberOfCheckingAccounts": 0,
+    "numberOfSavingsAccounts": 0,
+    "numberOfCDAccounts": 0,
+    "combinedBalance": 0.0
+}
+
+STATUS RETURNED
+200
+
+BODY GET /AccountHolders
+[
+    {
+        "id": 1,
+        "firstName": "Sadiq",
+        "middleName": "",
+        "lastName": "Manji",
+        "checkingAccounts": [],
+        "savingsAccounts": [],
+        "cdaccounts": [],
+        "ssn": "123456789",
+        "checkingBalance": 0.0,
+        "savingsBalance": 0.0,
+        "cdbalance": 0.0,
+        "numberOfCheckingAccounts": 0,
+        "numberOfSavingsAccounts": 0,
+        "numberOfCDAccounts": 0,
+        "combinedBalance": 0.0
+    },
+    {
+        "id": 2,
+        "firstName": "David",
+        "middleName": "Michael",
+        "lastName": "Amateau",
+        "checkingAccounts": [],
+        "savingsAccounts": [],
+        "cdaccounts": [],
+        "ssn": "234567890",
+        "checkingBalance": 0.0,
+        "savingsBalance": 0.0,
+        "cdbalance": 0.0,
+        "numberOfCheckingAccounts": 0,
+        "numberOfSavingsAccounts": 0,
+        "numberOfCDAccounts": 0,
+        "combinedBalance": 0.0
+    }
+]
+
+STATUS RETURNED
+200
+
+
+
+BODY POST /AccountHolders/1/CheckingAccounts
+{
+    "balance": 1000
+}
+
+STATUS RETURNED
+201
+
+BODY POST /AccountHolders/1/CheckingAccounts
+{
+    "balance": 500
+}
+
+STATUS RETURNED
+201
+
+BODY GET /AccountHolders/1/CheckingAccounts
+[
+    {
+        "openedOn": "2021-04-18T21:08:21.861+00:00",
+        "accountNumber": 1,
+        "interestRate": 1.0E-4,
+        "balance": 1000.0
+    },
+    {
+        "openedOn": "2021-04-18T21:09:20.754+00:00",
+        "accountNumber": 2,
+        "interestRate": 1.0E-4,
+        "balance": 500.0
+    }
+]
+
+STATUS RETURNED
+200
+
+BODY POST /AccountHolders/1/CDAccounts
+{
+    "balance": 1000,
+    "cdOffering": {
+        "id": 1
+    }
+}
+
+STATUS RETURNED
+201
+
+BODY GET /AccountHolders/1/CDAccounts
+{
+    "openedOn": "2021-04-18T21:13:27.806+00:00",
+    "accountNumber": 10,
+    "interestRate": 0.0,
+    "balance": 1000.0,
+    "term": 0
+}

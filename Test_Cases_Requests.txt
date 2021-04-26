@@ -1,0 +1,25 @@
+POST/GET REQUEST TO CDOfferings
+http://localhost:8080/CDOfferings
+
+POST/GET REQUEST TO AccountHolders
+http://localhost:8080/AccountHolders
+
+POST/GET REQUEST TO AccountHolders/id
+http://localhost:8080/AccountHolders/1
+http://localhost:8080/AccountHolders/2
+http://localhost:8080/AccountHolders/3
+
+POST/GET REQUEST TO AccountHolders/id/CheckingAccounts
+http://localhost:8080/AccountHolders/1/CheckingAccounts
+http://localhost:8080/AccountHolders/2/CheckingAccounts
+http://localhost:8080/AccountHolders/3/CheckingAccounts
+
+POST/GET REQUEST TO AccountHolders/id/SavingsAccounts
+http://localhost:8080/AccountHolders/1/SavingsAccounts
+http://localhost:8080/AccountHolders/2/SavingsAccounts
+http://localhost:8080/AccountHolders/3/SavingsAccounts
+
+POST/GET REQUEST TO AccountHolders/id/CDAccounts
+http://localhost:8080/AccountHolders/1/CDAccounts
+http://localhost:8080/AccountHolders/2/CDAccounts
+http://localhost:8080/AccountHolders/3/CDAccounts
