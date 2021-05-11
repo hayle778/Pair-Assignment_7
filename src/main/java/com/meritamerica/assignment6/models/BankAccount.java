@@ -11,25 +11,36 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class BankAccount {
-    @Autowired
-    @Id
-       @OneToOne  // with accountHolder
-       @OneToMany  // with the other models
+public class BankAccount extends AccountHolder {
+       @Autowired
+       @Id
+       @ ManyToOne(cascade = CascadeType.ALL)  // with the other models
+       @JoinColumn(name = "bankAccount_id")  // it just run with employee_id
+     protected AccountHolder accountHolder;
        @GeneratedValue(strategy = GenerationType.AUTO)
     // region instance variables
+   @OneToMany
     protected Date openedOn;
     protected Long accountNumber;
     protected double interestRate;
     protected double balance;
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "bankHolder")
+  //  private List <accountNumber>  accountNumbers;
+    private List<CheckingAccount> checkingAccounts;
+    private List<SavingsAccount> savingsAccounts;
+    private List<CDAccount> cdAccounts;
+
+    //@ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private final ArrayList<Transaction> transactions = new ArrayList<>();
     // endregion
 
     // region constructors
+public BankAccount(){}
 
-    public BankAccount(){
+    public BankAccount(Date openedOn, Long accountNumber, double interestRate, double balance){
+        super();
     }
 
     public BankAccount(double balance, double interestRate){
@@ -41,6 +52,7 @@ public class BankAccount {
     }
 
     protected BankAccount(long accountNumber, double balance, double interestRate, Date openedOn){
+        super();
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.interestRate = interestRate;
@@ -84,15 +96,19 @@ public class BankAccount {
     // endregion
 
     // region read/write from string
-    static BankAccount readFromString(String accountData) throws ParseException { return null; }
+    public static BankAccount readFromString(String accountData) throws ParseException { return null; }
 
-    public String writeToString() {
-        return this.accountNumber + "," + this.balance + "," + String.format("%.4f", this.interestRate) + "," +
-                (this.openedOn.getDate() + 1) + "/" +
-                this.openedOn.getMonth() + "/" +
-                (this.openedOn.getYear() + 1900);
+    @Override
+    public String toString() {
+        return "BankAccount{" +
+                "accountHolder=" + accountHolder +
+                ", openedOn=" + openedOn +
+                ", accountNumber=" + accountNumber +
+                ", interestRate=" + interestRate +
+                ", balance=" + balance +
+                '}';
     }
-    // endregion
+
 
     public double futureValue(int years) { return MeritBank.recursiveFutureValue(this.balance, this.interestRate, years); }
 }

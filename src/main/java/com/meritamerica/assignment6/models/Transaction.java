@@ -1,5 +1,6 @@
 package com.meritamerica.assignment6.models;
 
+import com.meritamerica.assignment6.Resource.MeritBankControllerResource;
 import com.meritamerica.assignment6.exceptions.ExceedsAvailableBalanceException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
 import com.meritamerica.assignment6.exceptions.NegativeAmountException;
@@ -9,12 +10,25 @@ import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-     @Entity
+@Entity
 public abstract class Transaction {
+
              @Id
-             @ ManyToOne
-            @GeneratedValue(strategy = GenerationType.AUTO)
+
+             @ManyToOne(fetch = FetchType.LAZY)
+             @JoinColumn(name = "Transaction_id")
+       MeritBankControllerResource meritBankControllerResource;
+
+             private AccountHolder accountHolder;  // revise it no connection transaction with Account
+              @OneToMany(fetch = FetchType.LAZY, mappedBy = "transaction")
+
+            private List<TransferTransaction> transferTransaction;
+            private List<WithdrawTransaction> withdrawTransaction;
+            private List<DepositTransaction> depositTransaction;
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
     //region InstanceVariables
     protected BankAccount sourceAccount;
     protected BankAccount targetAccount;
@@ -24,6 +38,7 @@ public abstract class Transaction {
     private boolean isProcessed;
     private String reason;
     //endregion
+
 
     // region getters/setters
     public BankAccount getSourceAccount() { return this.sourceAccount; }

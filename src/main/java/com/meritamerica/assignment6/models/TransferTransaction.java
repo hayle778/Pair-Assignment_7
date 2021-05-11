@@ -3,13 +3,23 @@ package com.meritamerica.assignment6.models;
 import com.meritamerica.assignment6.exceptions.ExceedsAvailableBalanceException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
 import com.meritamerica.assignment6.exceptions.NegativeAmountException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-@Entity
+  @Entity
 public class TransferTransaction extends Transaction {
+         @Id
+          @GeneratedValue(strategy = GenerationType.AUTO)
+         BankAccount sourceAccount;
+         BankAccount targetAccount;
+         double amount;
+          @ManyToOne(fetch = FetchType.LAZY)
+            @JoinColumn(name = "TransferTransaction_id")
+          private Transaction transaction;
+         @Autowired
 
-    TransferTransaction(BankAccount sourceAccount, BankAccount targetAccount, double amount) {
+       TransferTransaction(BankAccount sourceAccount, BankAccount targetAccount, double amount) {
         this.sourceAccount = sourceAccount;
         this.targetAccount = targetAccount;
         this.amount = amount;

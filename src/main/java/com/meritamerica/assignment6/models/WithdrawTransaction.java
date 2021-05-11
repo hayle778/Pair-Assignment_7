@@ -5,11 +5,19 @@ import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitExcepti
 import com.meritamerica.assignment6.exceptions.NegativeAmountException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 public class WithdrawTransaction extends Transaction {
-@Autowired
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    BankAccount targetAccount;
+    double amount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_id")
+    private Transaction transaction;
+
+    @Autowired
     WithdrawTransaction(BankAccount targetAccount, double amount) {
         this.targetAccount = targetAccount;
         this.amount = amount;

@@ -9,8 +9,17 @@ import java.util.Date;
      @Inheritance
      public class CheckingAccount extends BankAccount {
 
+         @Id
+         @GeneratedValue(strategy = GenerationType.AUTO)
+      protected Long id;
+         @ManyToOne
+         @JoinColumn(name = "checkingAccout _id")
+         protected AccountHolder accountHolder;
+          public BankAccount bankAccount;
+
+
     //@GeneratedValue(strategy = GenerationType.AUTO)
-         protected CheckingAccount() {
+    public CheckingAccount() {
         super(MeritBank.getNextAccountNumber(), 0, MeritBank.CHECKING_INTEREST_RATE, new Date());
     }
 
@@ -22,7 +31,7 @@ import java.util.Date;
         super(accountNumber, balance, interestRate, openedOn);
     }
 
-    static CheckingAccount readFromString(String accountData) throws ParseException{
+    public static CheckingAccount readFromString(String accountData) throws ParseException{
         String[] temp = accountData.split(",");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 

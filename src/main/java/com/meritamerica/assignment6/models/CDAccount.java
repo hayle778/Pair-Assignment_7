@@ -2,10 +2,7 @@ package com.meritamerica.assignment6.models;
 
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,11 +11,11 @@ import java.util.Date;
 
 public class CDAccount extends BankAccount {
       @Id
-      @ManyToOne
-       protected AccountHolder accountHolder;
+     protected AccountHolder accountHolder;
       @ManyToOne
        protected CDOffering cdOffering;
-
+     @JoinColumn (name = "CDAccount_id")
+    private BankAccount bankAccount;
       @GeneratedValue(strategy = GenerationType.AUTO)
 
       //protected CDOffering cdOffering;

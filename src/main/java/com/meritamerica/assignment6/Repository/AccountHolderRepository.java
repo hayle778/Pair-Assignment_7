@@ -1,8 +1,7 @@
 package com.meritamerica.assignment6.Repository;
 
-import com.meritamerica.assignment6.exceptions.ExceedsAvailableBalanceException;
+import com.meritamerica.assignment6.exceptions.ExceedsCombinedBalanceLimitException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
-import com.meritamerica.assignment6.exceptions.NegativeAmountException;
 import com.meritamerica.assignment6.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
@@ -17,7 +16,8 @@ import java.util.List;
 
 @RequestMapping(value = "/rest/accountHolder/log")
 public class AccountHolderRepository extends JpaRepositoriesAutoConfiguration {
-    @Autowired
+
+ @Autowired
      AccountHolderRepository accountHolderRepository;
      AccountHoldersContactDetail accountHoldersContactDetail;
      CheckingAccount checkingAccount;
@@ -39,7 +39,7 @@ public class AccountHolderRepository extends JpaRepositoriesAutoConfiguration {
  return findAll();
  }
 @GetMapping(value = "update/{name}")
- public List<AccountHolder> update(@PathVariable final String name){
+ public List<AccountHolder> update(@PathVariable final String name) throws ExceedsFraudSuspicionLimitException, ExceedsCombinedBalanceLimitException {
   // this AccountHolder class call all list that we have
   AccountHolder accountHolder = new AccountHolder();
  //accountHolder.setFirstName("ff");
@@ -62,5 +62,8 @@ return (List<AccountHolder>) AccountHolderRepository;
  //return (List<Transaction>)  BankAccountRepository;
 
 }
+
+
+
 
 }

@@ -7,7 +7,7 @@ import javax.persistence.*;
      @Entity
 public class AccountHoldersContactDetail extends AccountHolder{
      @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
      @OneToOne
     private  String firstName;
     private String middleName;

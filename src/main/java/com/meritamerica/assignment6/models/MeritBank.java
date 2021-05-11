@@ -2,17 +2,16 @@ package com.meritamerica.assignment6.models;
 
 
 import com.meritamerica.assignment6.Repository.AccountHolderRepository;
+import com.meritamerica.assignment6.Repository.BankAccountRepository;
 import com.meritamerica.assignment6.Repository.TransactionRepository;
+import com.meritamerica.assignment6.Resource.MeritBankControllerResource;
 import com.meritamerica.assignment6.exceptions.ExceedsAvailableBalanceException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
 import com.meritamerica.assignment6.exceptions.NegativeAmountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,15 +21,22 @@ import java.util.*;
  * this class represents Merit Bank and holds all of their account holders, cd offerings and business
  * logic requested by Merit Bank.
  */
-
-@Controller
-
-        public class MeritBank {
+  @Entity
+  @Controller
+   public class MeritBank {
              @Autowired
               @OneToMany
-    AccountHolderRepository accountHolderRepository;
+     BankAccountRepository bankAccountRepository;
+     AccountHolderRepository accountHolderRepository;
       TransactionRepository transactionRepository;
+
+     @Id
       @GeneratedValue(strategy = GenerationType.AUTO)
+     @OneToMany(fetch = FetchType.LAZY, mappedBy = "meritBank")
+     @JoinColumn(name = "MeritBank")
+     private MeritBankControllerResource meritBankControllerResource;
+
+
       // region global variables
     /** a list of all the account holders of Merit Bank */
     private static final ArrayList<AccountHolder> accountHolders = new ArrayList<>();
@@ -61,13 +67,6 @@ import java.util.*;
         accountHolders.add(accountHolder);
     }
 
-    /**
-     * this method clears all current cd offerings held by Merit Bank and
-     * takes in an array of cd offerings and sets them as the offerings
-     * being held by Merit Bank
-     *
-     * @param cdOfferings an array of cd offerings
-     */
     public static void setCDOfferings(CDOffering[] cdOfferings) {
         MeritBank.cdOfferings.clear();
         MeritBank.cdOfferings.addAll(Arrays.asList(cdOfferings));
@@ -354,7 +353,7 @@ import java.util.*;
                         tempTransactions.removeIf(x::equals);
                         tempTransactions.add(x);
                     }
-                    currentAC.addSavingsAccount(currentSA);
+                    currentAC.addSavingsAccount();
                 }
                 int numCDAccounts = sc.nextInt();
                 for (int c = 0; c < numCDAccounts; c++){
@@ -365,7 +364,7 @@ import java.util.*;
                         tempTransactions.removeIf(x::equals);
                         tempTransactions.add(x);
                     }
-                    currentAC.addCDAccount(currentCD);
+                    currentAC.addCDAccount();
                 }
                 addAccountHolder(currentAC);
             }

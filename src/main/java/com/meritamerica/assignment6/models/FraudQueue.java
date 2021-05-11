@@ -1,18 +1,28 @@
 package com.meritamerica.assignment6.models;
 
+import com.meritamerica.assignment6.Repository.BankAccountRepository;
+
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
 import java.util.LinkedList;
 
 /**
  * The fraud queue contains a list of transactions that have been flagged for review
  * before processing by exceeding the maximum amount of a transaction set by Merit Bank.
  */
-@Entity
-@Inheritance
+   @Entity
+   @Inheritance
 public class FraudQueue {
 
-    /** a list of the transactions that have been flagged for review */
+   @ JoinColumn(name = "employee_id")
+   private MeritBank meritBank;
+
+
+
+
+
+
     private LinkedList<Transaction> transactions;
 
     /** no arguments constructor */

@@ -1,5 +1,6 @@
 package com.meritamerica.assignment6.models;
 
+import com.meritamerica.assignment6.Resource.MeritBankControllerResource;
 import com.meritamerica.assignment6.exceptions.ExceedsCombinedBalanceLimitException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,38 +11,48 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-/**
- * This class represents an account holder of Merit Bank and contains all the
- * basic information of the account holders personal details as well as lists
- * of objects of their various accounts held by Merit Bank.
- */
 
     @Entity
     @RestController
-public class AccountHolder implements Comparable<AccountHolder> {
-    @Autowired
+    public class AccountHolder implements Comparable<AccountHolder> {
 
+
+        @Autowired
         @OneToOne
-    AccountHoldersContactDetail accountHoldersContactDetail;
+        AccountHoldersContactDetail accountHoldersContactDetail;
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
 
-    @OneToMany
+        private int id;
+   // private String UserName;
+     private static int nextId = 1;
+     protected Date openedOn;
+     protected Long accountNumber;
+     protected double interestRate;
+     protected double balance;
+
+    // the account holder class pull all the Bank account, (SA,CA,CDA)
+      @ManyToOne
+      MeritBank meritBank;
+        @OneToOne
+        MeritBankControllerResource meritBankControllerResource;
+
+        @JoinColumn(name =  "accountHolder_id")
+      @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder") // this mapped to pull any child to the super class
+
+   private List<SavingsAccount> savingsAccounts;
+   private List<CheckingAccount> checkingAccounts;
+   private List<CDAccount> cdAccounts;
+   private List<BankAccount> bankAccounts;
+   private  List<CDOffering> cdOfferings;
+    private List<AccountHoldersContactDetail> accountHoldersContactDetails;
+
+
     CheckingAccount checkingAccount;
     SavingsAccount savingsAccount;
     CDAccount cdAccount;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-  //  @GeneratedValue(strategy = GeneratedValue.IDENTITY)
-    //region GlobalVariables
-    private static int nextId = 1;
-    //endregion
-
-    //region InstanceVariables
-    /** The id of an account holder which is used to locate them by the API */
-    private int id;
-
     /** an account holders first name */
     @NotNull(message = "First name is a required field")
     @NotBlank(message = "First name cannot be left blank")
@@ -60,22 +71,8 @@ public class AccountHolder implements Comparable<AccountHolder> {
     @NotBlank(message = "SSN cannot be left blank")
     private String SSN;
 
-    /** a list of the account holders checking accounts held by Merit Bank */
-    private List<CheckingAccount> checkingAccounts;
-    /** a list of the account holders savings accounts held by Merit Bank */
-    private List<SavingsAccount> savingsAccounts;
-    /** a list of the account holders cd accounts held by Merit Bank */
-    private List<CDAccount> cdAccounts;
-    //endregion
-
-    //region Constructors
-
-    /**
-     * the main constructor of the account holder class that sets the personal details
-     * of the account holder and initializes ArrayList to hold their accounts
-     *
-     */
     public AccountHolder() {
+
         this.id = getNextId();
         this.firstName = firstName;
         this.middleName = middleName;
@@ -140,14 +137,6 @@ public class AccountHolder implements Comparable<AccountHolder> {
         return this.addCheckingAccount(new CheckingAccount(openingBalance));
     }
 
-    /**
-     * this method takes in a checking account and checks to see if the account holder is
-     * under the maximum balance allowed to create a new checking account and if so adds it
-     * to the account holders list of checking accounts
-     *
-     * @param checkingAccount the checking account to be added
-     * @return the checking account that has been successfully added
-     */
     public CheckingAccount addCheckingAccount(CheckingAccount checkingAccount) throws
             ExceedsCombinedBalanceLimitException, ExceedsFraudSuspicionLimitException {
         if (this.getCheckingBalance() + this.getSavingsBalance() +
@@ -201,7 +190,7 @@ public class AccountHolder implements Comparable<AccountHolder> {
      */
     public SavingsAccount addSavingsAccount(double openingBalance) throws ExceedsCombinedBalanceLimitException,
             ExceedsFraudSuspicionLimitException {
-        return this.addSavingsAccount(new SavingsAccount(openingBalance));
+        return this.addSavingsAccount();
     }
 
     /**
@@ -209,10 +198,9 @@ public class AccountHolder implements Comparable<AccountHolder> {
      * under the maximum balance allowed to create a new savings account and if so adds it
      * to the account holders list of savings accounts
      *
-     * @param savingsAccount the savings account to be added
      * @return the savings account that has been successfully added
      */
-    public SavingsAccount addSavingsAccount(SavingsAccount savingsAccount) throws ExceedsCombinedBalanceLimitException,
+    public SavingsAccount addSavingsAccount() throws ExceedsCombinedBalanceLimitException,
             ExceedsFraudSuspicionLimitException {
         if (this.getCheckingBalance() + this.getSavingsBalance()
                 + savingsAccount.getBalance() > MeritBank.NEW_ACCOUNT_MAX_BALANCE){
@@ -264,16 +252,15 @@ public class AccountHolder implements Comparable<AccountHolder> {
      * @return a new cd account object
      */
     public CDAccount addCDAccount(CDOffering cdOffering, int openingBalance) throws ExceedsFraudSuspicionLimitException{
-        return this.addCDAccount(new CDAccount(cdOffering, openingBalance));
+        return this.addCDAccount();
     }
 
     /**
      * this method takes in a cd account and  adds it to the account holders list of cd accounts
      *
-     * @param cdAccount the cd account to be added
      * @return the cd account that has been successfully added
      */
-    public CDAccount addCDAccount(CDAccount cdAccount) throws ExceedsFraudSuspicionLimitException {
+    public CDAccount addCDAccount() throws ExceedsFraudSuspicionLimitException {
         if (cdAccount.getBalance() > MeritBank.FRAUD_SUSPICION_THRESHOLD){
             throw new ExceedsFraudSuspicionLimitException("Possible fraud detected on new cd account");
         }
@@ -361,9 +348,9 @@ public class AccountHolder implements Comparable<AccountHolder> {
     public static AccountHolder readFromString(String accountHolderData) throws Exception {
         String[] temp = accountHolderData.split(",");
         if (temp.length != 4) throw new Exception();
-        return new AccountHolder();
+        return  readFromString(accountHolderData);
     }
-    // endregion
+
 
 
     @Override
@@ -372,15 +359,21 @@ public class AccountHolder implements Comparable<AccountHolder> {
         else if (this.getCombinedBalance() > other.getCombinedBalance()) return 1;
         else return 0;
     }
-////////// this methods ask by accountHolderRepository for updating the updated value
- public void addCDAccount() {
-}
 
     public void addCheckingAccount() {
     }
+////////// this methods ask by accountHolderRepository for updating the updated value
+ //public void addCDAccount() {
 
-    public void addSavingsAccount() {
-    }
+
+
+//}
+
+    //public void addCheckingAccount() {
+   // }
+
+    //public void addSavingsAccount() {
+    //}
 
 
 }

@@ -1,8 +1,8 @@
 package com.meritamerica.assignment6.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.OneToMany;
+import org.springframework.data.annotation.Id;
+
+import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +11,13 @@ import java.util.Date;
       @Entity
       @Inheritance
       public class SavingsAccount extends BankAccount {
-public SavingsAccount() {
+          @Id
+         @GeneratedValue(strategy = GenerationType.AUTO)
+          @ ManyToOne
+          @JoinColumn(name = "SavingAcc_id")
+          private BankAccount bankAccount;
+          public SavingsAccount()
+  {
         super(MeritBank.getNextAccountNumber(), 0, MeritBank.SAVINGS_INTEREST_RATE, new Date());
     }
 
@@ -23,7 +29,7 @@ public SavingsAccount() {
         super(accountNumber, balance, interestRate, openedOn);
     }
 
-    static SavingsAccount readFromString(String accountData) throws ParseException {
+   public static SavingsAccount readFromString(String accountData) throws ParseException {
         String[] temp = accountData.split(",");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 

@@ -4,12 +4,21 @@ import com.meritamerica.assignment6.exceptions.ExceedsAvailableBalanceException;
 import com.meritamerica.assignment6.exceptions.ExceedsFraudSuspicionLimitException;
 import com.meritamerica.assignment6.exceptions.NegativeAmountException;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
+import javax.persistence.*;
 
 @Entity
 @Inheritance
 public class DepositTransaction extends Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+     protected BankAccount targetAccount;
+      protected double amount;
+
+      @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DepositTransaction_id")
+    private Transaction transaction;
+
 
     DepositTransaction(BankAccount targetAccount, double amount) {
         this.targetAccount = targetAccount;
